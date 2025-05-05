@@ -1,4 +1,4 @@
-package logic.models
+package domain.models
 
 import kotlinx.serialization.Serializable
 

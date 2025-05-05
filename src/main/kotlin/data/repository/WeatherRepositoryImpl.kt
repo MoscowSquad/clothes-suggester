@@ -1,5 +1,5 @@
 package data.repository
 
-import logic.repository.WeatherRepository
+import domain.repository.WeatherRepository
 
-interface WeatherRepositoryImpl : WeatherRepository
+class WeatherRepositoryImpl : WeatherRepository

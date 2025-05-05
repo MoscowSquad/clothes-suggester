@@ -1,3 +1,3 @@
-package logic.repository
+package domain.repository
 
 interface WeatherRepository

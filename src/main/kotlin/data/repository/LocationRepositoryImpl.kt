@@ -1,5 +1,5 @@
 package data.repository
 
-import logic.repository.LocationRepository
+import domain.repository.LocationRepository
 
-interface LocationRepositoryImpl :LocationRepository
+class LocationRepositoryImpl : LocationRepository

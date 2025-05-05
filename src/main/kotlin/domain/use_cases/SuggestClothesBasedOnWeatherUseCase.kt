@@ -1,6 +1,6 @@
-package logic.use_cases
+package domain.use_cases
 
-import logic.models.CurrentWeather
+import domain.models.CurrentWeather
 
 class SuggestClothesBasedOnWeatherUseCase(
     private val weather: CurrentWeather

@@ -1,6 +1,6 @@
-package logic.use_cases
+package domain.use_cases
 
-import logic.repository.WeatherRepository
+import domain.repository.WeatherRepository
 
 class GetCurrentWeatherUseCase(
     private val weatherRepository: WeatherRepository
