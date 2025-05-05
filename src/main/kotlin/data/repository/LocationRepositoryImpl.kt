@@ -1,0 +1,5 @@
+package data.repository
+
+import logic.repository.LocationRepository
+
+interface LocationRepositoryImpl :LocationRepository
