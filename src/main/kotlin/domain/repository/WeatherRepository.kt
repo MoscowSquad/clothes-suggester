@@ -1,3 +1,7 @@
 package domain.repository
 
-interface WeatherRepository
+import domain.models.CurrentWeather
+
+interface WeatherRepository {
+     suspend fun getCurrentWeather(city: String): CurrentWeather
+}
