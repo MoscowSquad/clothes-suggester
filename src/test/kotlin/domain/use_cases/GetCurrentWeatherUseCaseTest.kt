@@ -12,9 +12,8 @@ import org.junit.Assert.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
- class GetCurrentWeatherUseCaseTest {
+class GetCurrentWeatherUseCaseTest {
 
     private lateinit var weatherRepository: WeatherRepository
     private lateinit var getCurrentWeatherUseCase: GetCurrentWeatherUseCase
@@ -40,25 +39,30 @@ import org.junit.jupiter.api.Test
 
     @BeforeEach
     fun setup() {
-        weatherRepository = mockk()
+        weatherRepository = mockk(relaxed = true)
         getCurrentWeatherUseCase = GetCurrentWeatherUseCase(weatherRepository)
     }
 
     @Test
     fun `should return current weather for given city`() = runTest {
+        // Given
         coEvery { weatherRepository.getCurrentWeather(city) } returns expectedWeather
 
+        // When
         val result = getCurrentWeatherUseCase(city)
 
+        // Then
         assertEquals(expectedWeather, result)
         coVerify(exactly = 1) { weatherRepository.getCurrentWeather(city) }
     }
 
     @Test
     fun `should throw exception when repository fails`() = runTest {
+        // Given
         val exceptionMessage = "API error"
         coEvery { weatherRepository.getCurrentWeather(city) } throws RuntimeException(exceptionMessage)
 
+        // When / Then
         try {
             getCurrentWeatherUseCase(city)
             fail("Exception was expected")
@@ -69,21 +73,27 @@ import org.junit.jupiter.api.Test
 
     @Test
     fun `should return weather with valid temperature value`() = runTest {
+        // Given
         val modifiedWeather = expectedWeather.copy(temperature2m = "17.8")
         coEvery { weatherRepository.getCurrentWeather(city) } returns modifiedWeather
 
+        // When
         val result = getCurrentWeatherUseCase(city)
 
+        // Then
         assertEquals("17.8", result.temperature2m)
     }
 
     @Test
     fun `should call repository with empty city name`() = runTest {
+        // Given
         val emptyCity = ""
         coEvery { weatherRepository.getCurrentWeather(emptyCity) } returns expectedWeather
 
+        // When
         val result = getCurrentWeatherUseCase(emptyCity)
 
+        // Then
         assertEquals(expectedWeather, result)
         coVerify { weatherRepository.getCurrentWeather(emptyCity) }
     }
