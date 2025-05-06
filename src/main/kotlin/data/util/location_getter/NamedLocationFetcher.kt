@@ -1,10 +1,10 @@
-package domain.location_getter
+package data.util.location_getter
 
 import domain.models.Location
 import domain.util.location_getter.LocationFetcher
 
 class NamedLocationFetcher(placeName: String) : LocationFetcher {
-    override fun getLocation(): Location {
-        TODO("Not yet implemented")
+    override suspend fun getLocation(): Location {
+        return Location(0.0, 0.0, "")
     }
 }
