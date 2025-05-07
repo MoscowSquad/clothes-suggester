@@ -4,58 +4,70 @@ import com.google.common.truth.Truth
 import domain.models.Location
 import domain.models.NoLocationRetrieved
 import io.ktor.client.*
+import io.ktor.client.engine.mock.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.mockk.coEvery
-import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class CurrentLocationFetcherTest {
     private lateinit var httpClient: HttpClient
-    private lateinit var httpResponse: HttpResponse
     private lateinit var locationFetcher: CurrentLocationFetcher
 
-    @BeforeEach
-    fun setUp() {
-        httpClient = mockk()
-        httpResponse = mockk()
-
-        locationFetcher = CurrentLocationFetcher(this.httpClient)
+    private fun setUp(handler: MockRequestHandleScope.(HttpRequestData) -> HttpResponseData) {
+        val mockEngine = MockEngine(handler)
+        httpClient = HttpClient(mockEngine)
+        locationFetcher = CurrentLocationFetcher(httpClient)
     }
 
     @Test
     fun `should return location when getting location return from the api`() = runTest {
         // Given
-        val mockFunc: HttpRequestBuilder.() -> Unit = mockk(relaxed = true)
-        coEvery { httpResponse.status } returns HttpStatusCode.OK
-        coEvery { mockFunc.invoke(any()) } returns Unit
-        coEvery { httpClient.get(any<String>(), mockFunc) } returns httpResponse
-        coEvery { httpResponse.bodyAsText() } returns """
-            {"latitude":29.9791854, "longitude":31.1316879, "label":"The Great Pyramid of Giza"}
-        """.trimIndent()
+        setUp { _ ->
+            respond(
+                content = """{"latitude":29.9791854, "longitude":31.1316879, "label":"The Great Pyramid of Giza"}""",
+                status = HttpStatusCode.OK, headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
 
         // When
         val result = locationFetcher.getLocation()
 
         // Then
-        Truth.assertThat(result)
-            .isEqualTo(Location(29.9791854, 31.1316879, "The Great Pyramid of Giza"))
+        Truth.assertThat(result).isEqualTo(
+            Location(29.9791854, 31.1316879, "The Great Pyramid of Giza")
+        )
+    }
+
+    @Test
+    fun `should return location when getting location return from the api even if there is other key inside the JSON data`() = runTest {
+        // Given
+        setUp { _ ->
+            respond(
+                content = """{"latitude":29.9791854, "longitude":31.1316879, "label":"The Great Pyramid of Giza","city":"Giza","country":"Egypt"}""",
+                status = HttpStatusCode.OK, headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+
+        // When
+        val result = locationFetcher.getLocation()
+
+        // Then
+        Truth.assertThat(result).isEqualTo(
+            Location(29.9791854, 31.1316879, "The Great Pyramid of Giza")
+        )
     }
 
     @Test
     fun `should throw NoLocationRetrieved when error happen after request the api`() = runTest {
         // Given
-        val mockFunc: HttpRequestBuilder.() -> Unit = mockk(relaxed = true)
-        coEvery { httpResponse.status } returns HttpStatusCode.NotFound
-        coEvery { mockFunc.invoke(any()) } returns Unit
-        coEvery { httpClient.get(any<String>(), mockFunc) } returns httpResponse
-        coEvery { httpResponse.bodyAsText() } returns """
-            {"latitude":29.9791854, "longitude":31.1316879, "label":"The Great Pyramid of Giza"}
-        """.trimIndent()
+        setUp { _ ->
+            respond(
+                content = """{"latitude":29.9791854, "longitude":31.1316879, "label":"The Great Pyramid of Giza"}""",
+                status = HttpStatusCode.NotFound, headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
 
         // When, Then
         assertThrows<NoLocationRetrieved> {
@@ -66,13 +78,13 @@ class CurrentLocationFetcherTest {
     @Test
     fun `should throw NoLocationRetrieved when response not correct`() = runTest {
         // Given
-        val mockFunc: HttpRequestBuilder.() -> Unit = mockk(relaxed = true)
-        coEvery { httpResponse.status } returns HttpStatusCode.OK
-        coEvery { mockFunc.invoke(any()) } returns Unit
-        coEvery { httpClient.get(any<String>(), mockFunc) } returns httpResponse
-        coEvery { httpResponse.bodyAsText() } returns """
-            <HTML><HEAD><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1"><TITLE>ERROR: The request could not be satisfied</TITLE></HEAD>
-        """.trimIndent()
+        setUp { _ ->
+            respond(
+                content = """<html itemscope="" itemtype="http://schema.org/WebPage" lang="en">""",
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
 
         // When, Then
         assertThrows<NoLocationRetrieved> {

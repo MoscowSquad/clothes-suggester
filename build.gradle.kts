@@ -26,6 +26,7 @@ dependencies {
 
     implementation("io.ktor:ktor-client-core:2.3.13")
     implementation("io.ktor:ktor-client-cio:2.3.13")
+    testImplementation("io.ktor:ktor-client-mock:2.3.13")
 
     implementation("ch.qos.logback:logback-classic:1.5.6")
 
