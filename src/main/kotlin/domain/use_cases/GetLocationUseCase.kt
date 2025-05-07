@@ -1,6 +1,10 @@
 package domain.use_cases
 
-import domain.util.location_getter.LocationFetcher
+import domain.models.Location
+import domain.repository.LocationRepository
 
-class GetLocationUseCase(private val locationGetter: LocationFetcher) {
+class GetLocationUseCase(private val repository: LocationRepository) {
+    suspend fun execute(): Location {
+        return repository.getCurrentLocation()
+    }
 }

@@ -4,7 +4,11 @@ import domain.models.Location
 import domain.repository.LocationRepository
 
 class LocationRepositoryImpl : LocationRepository {
-    override suspend fun getLocation(city: String): Location {
-        TODO("Not yet implemented")
+    override suspend fun getCurrentLocation(): Location {
+        return Location(
+            latitude = 52.52,
+            longitude = 13.41,
+            label = "Berlin"
+        )
     }
 }
