@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DeveloperToolsToolWindowSettingsV1" lastSelectedContentNodeId="text-diff">
+    <developerToolsConfigurations>
+      <developerToolConfiguration developerToolId="text-diff" id="2d66c59d-2721-4024-8b3f-dcf85bde897b" name="Workbench">
+        <properties>
+          <property key="firstText" type="INPUT" value="kotlin.String|Location(latitude=29.9791854, longitude=31.1316879, label=The Great Pyramid of Giza)" />
+          <property key="secondText" type="INPUT" value="kotlin.String|Location(latitude=29.9791854, longitude=31.1316879, label=Giza)" />
+        </properties>
+      </developerToolConfiguration>
+    </developerToolsConfigurations>
+  </component>
+</project>
