@@ -36,9 +36,10 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation(kotlin("stdlib-jdk8"))
 
 
-    }
+}
 
 tasks.test {
     useJUnitPlatform()
