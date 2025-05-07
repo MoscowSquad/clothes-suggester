@@ -8,17 +8,20 @@ import io.ktor.client.engine.mock.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.BeforeEach
 
-class CurrentLocationFetcherTest {
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+
+class NamedLocationFetcherTest {
     private lateinit var httpClient: HttpClient
-    private lateinit var locationFetcher: CurrentLocationFetcher
+    private lateinit var locationFetcher: NamedLocationFetcher
 
     private fun setUp(handler: MockRequestHandleScope.(HttpRequestData) -> HttpResponseData) {
+        val location = "Russia Moscow"
         val mockEngine = MockEngine(handler)
         httpClient = HttpClient(mockEngine)
-        locationFetcher = CurrentLocationFetcher(httpClient)
+        locationFetcher = NamedLocationFetcher(location, httpClient)
     }
 
     @Test
@@ -26,7 +29,7 @@ class CurrentLocationFetcherTest {
         // Given
         setUp { _ ->
             respond(
-                content = """{"latitude":29.9791854, "longitude":31.1316879, "label":"The Great Pyramid of Giza"}""",
+                content = """{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt"}""",
                 status = HttpStatusCode.OK, headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
@@ -36,41 +39,42 @@ class CurrentLocationFetcherTest {
 
         // Then
         Truth.assertThat(result).isEqualTo(
-            Location(29.9791854, 31.1316879, "The Great Pyramid of Giza")
+            Location(29.9791854, 31.1316879, "Giza")
         )
     }
 
     @Test
-    fun `should ignore other JSON keys when getting location return from the api`() = runTest {
-        // Given
-        setUp { _ ->
-            respond(
-                content = """{"latitude":29.9791854, "longitude":31.1316879, "city":"The Great Pyramid of Giza","timezone": "Africa/Cairo"}""",
-                status = HttpStatusCode.OK, headers = headersOf(HttpHeaders.ContentType, "application/json")
+    fun `should ignore other JSON keys when getting location return from the api`() =
+        runTest {
+            // Given
+            setUp { _ ->
+                respond(
+                    content = """{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt","timezone": "Africa/Cairo"}""",
+                    status = HttpStatusCode.OK, headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+
+            // When
+            val result = locationFetcher.getLocation()
+
+            // Then
+            Truth.assertThat(result).isEqualTo(
+                Location(29.9791854, 31.1316879, "Giza")
             )
         }
-
-        // When
-        val result = locationFetcher.getLocation()
-
-        // Then
-        Truth.assertThat(result).isEqualTo(
-            Location(29.9791854, 31.1316879, "The Great Pyramid of Giza")
-        )
-    }
 
     @Test
     fun `should throw NoLocationRetrieved when error happen after request the api`() = runTest {
         // Given
         setUp { _ ->
             respond(
-                content = """{"latitude":29.9791854, "longitude":31.1316879, "label":"The Great Pyramid of Giza"}""",
+                content = """{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt"}""",
                 status = HttpStatusCode.NotFound, headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
 
         // When, Then
-        assertThrows<NoLocationRetrieved> {
+        org.junit.jupiter.api.assertThrows<NoLocationRetrieved> {
             locationFetcher.getLocation()
         }
     }
@@ -87,7 +91,7 @@ class CurrentLocationFetcherTest {
         }
 
         // When, Then
-        assertThrows<NoLocationRetrieved> {
+        org.junit.jupiter.api.assertThrows<NoLocationRetrieved> {
             locationFetcher.getLocation()
         }
     }
