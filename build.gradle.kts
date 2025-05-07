@@ -1,7 +1,7 @@
 plugins {
-    kotlin("jvm") version "2.1.0"
-    kotlin("plugin.serialization") version "1.8.20"
-    jacoco
+        kotlin("jvm") version "2.1.0"
+        kotlin("plugin.serialization") version "1.8.20"
+
 }
 
 group = "com.usc.team"
@@ -25,15 +25,18 @@ dependencies {
     testImplementation("com.google.truth:truth:1.4.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-
     implementation("io.ktor:ktor-client-core:2.3.13")
     implementation("io.ktor:ktor-client-cio:2.3.13")
-
     implementation("ch.qos.logback:logback-classic:1.5.6")
-
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-    implementation(kotlin("stdlib-jdk8"))
-}
+    val ktor_version = "2.3.10"
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+
+
+    }
 
 tasks.test {
     useJUnitPlatform()

@@ -1,3 +1,7 @@
 package domain.repository
 
-interface LocationRepository
+import domain.models.Location
+
+interface LocationRepository {
+    suspend fun getCurrentLocation(): Location
+}
