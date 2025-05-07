@@ -21,7 +21,7 @@ class LocationRepositoryImplTest {
     }
 
     @Test
-    fun `should return the location from location fetcher when getting the location`() = runTest {
+    fun `getLocation() should return the location from location fetcher when getting the location`() = runTest {
         // Given
         val location = Location(29.9791854, 31.1316879, "The Great Pyramid of Giza")
         coEvery { locationFetcher.getLocation() } returns location
@@ -34,7 +34,7 @@ class LocationRepositoryImplTest {
     }
 
     @Test
-    fun `should get location using LocationFetcher when getting the location`() = runTest {
+    fun `getLocation() should get location using LocationFetcher when getting the location`() = runTest {
         // When
         locationRepository.getLocation()
 
