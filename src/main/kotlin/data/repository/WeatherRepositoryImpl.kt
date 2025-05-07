@@ -10,15 +10,11 @@ import io.ktor.http.*
 
 class WeatherRepositoryImpl(private val httpClient: HttpClient) : WeatherRepository {
     override suspend fun getCurrentWeather(latitude: Double, longitude: Double): CurrentWeather {
-        val response: HttpResponse =
-            httpClient.get("https://my-server.tld/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,showers,weather_code,cloud_cover,wind_speed_10m") {
-                parameter("latitude", latitude)
-                parameter("longitude", longitude)
-                parameter(
-                    "current", "temperature_2m,relative_humidity_2m,apparent_temperature,is_day," +
-                            "precipitation,showers,weather_code,cloud_cover,wind_speed_10m"
-                )
-            }
+        val response: HttpResponse = httpClient.get("https://api.open-meteo.com/v1/forecast") {
+            parameter("latitude", latitude)
+            parameter("longitude", longitude)
+            parameter("current", "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,wind_speed_10m,snowfall,rain,weather_code,cloud_cover")
+        }
 
         if (!response.status.isSuccess()) {
             throw Exception("Failed to fetch weather data: ${response.status}")

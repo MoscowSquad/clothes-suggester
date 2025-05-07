@@ -24,20 +24,16 @@ class GetCurrentWeatherUseCaseTest {
     private val longitude = 37.6173
     private val expectedWeather = CurrentWeather(
         time = "2025-05-06T15:00",
-        interval = "900",
+        interval = 100.0,
         temperature2m = 12.5,
         relativeHumidity2m = 67.0,
         apparentTemperature = 11.2,
         isDay = 1,
-        precipitation = 0.1,
         rain = 0.1,
-        showers = 0.0,
         snowfall = 0.0,
-        weatherCode = 3,
-        cloudCover = 65,
+        weatherCode = 3.0,
+        cloudCover = 65.0,
         windSpeed10m = 6.8,
-        windDirection10m = 80,
-        windGusts10m = 14.2
     )
 
     @BeforeEach
