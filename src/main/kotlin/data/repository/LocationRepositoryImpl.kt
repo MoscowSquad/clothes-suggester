@@ -2,13 +2,10 @@ package data.repository
 
 import domain.models.Location
 import domain.repository.LocationRepository
+import domain.util.location_getter.LocationFetcher
 
-class LocationRepositoryImpl : LocationRepository {
-    override suspend fun getCurrentLocation(): Location {
-        return Location(
-            latitude = 52.52,
-            longitude = 13.41,
-            label = "Berlin"
-        )
+class LocationRepositoryImpl(private val locationFetcher: LocationFetcher) : LocationRepository {
+    override suspend fun getLocation(): Location {
+        return locationFetcher.getLocation()
     }
 }
