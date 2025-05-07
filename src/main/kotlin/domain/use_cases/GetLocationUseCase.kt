@@ -4,7 +4,7 @@ import domain.models.Location
 import domain.repository.LocationRepository
 
 class GetLocationUseCase(private val repository: LocationRepository) {
-    suspend fun execute(): Location {
+    suspend fun getLocation(): Location {
         return repository.getCurrentLocation()
     }
 }

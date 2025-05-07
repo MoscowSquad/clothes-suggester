@@ -3,7 +3,7 @@ package domain.use_cases
 import GetCurrentWeatherUseCase
 import WeatherRepository
 import domain.models.CurrentWeather
- import io.mockk.coEvery
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,6 +13,7 @@ import org.junit.Assert.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.assertThrows
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetCurrentWeatherUseCaseTest {
@@ -48,7 +49,7 @@ class GetCurrentWeatherUseCaseTest {
         coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } returns expectedWeather
 
         // When
-        val result = getCurrentWeatherUseCase(latitude, longitude)
+        val result = getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
 
         // Then
         coVerify(exactly = 1) { weatherRepository.getCurrentWeather(latitude, longitude) }
@@ -56,19 +57,19 @@ class GetCurrentWeatherUseCaseTest {
     }
 
     @Test
+
     fun `should throw exception when repository fails`() = runTest {
         // Given
         val exceptionMessage = "API error"
         coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } throws RuntimeException(exceptionMessage)
 
-        try {
-            // When
-            getCurrentWeatherUseCase(latitude, longitude)
-            fail("Exception was expected")
-        } catch (e: RuntimeException) {
-            // Then
-            assertThat(e.message).isEqualTo(exceptionMessage)
+        // When / Then
+        val exception = assertThrows<RuntimeException> {
+            getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
         }
+
+        // Assert
+        assertThat(exception.message).isEqualTo(exceptionMessage)
     }
 
     @Test
@@ -78,7 +79,7 @@ class GetCurrentWeatherUseCaseTest {
         coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } returns modifiedWeather
 
         // When
-        val result = getCurrentWeatherUseCase(latitude, longitude)
+        val result = getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
 
         // Then
         assertThat(result.temperature2m).isEqualTo(20.8)
@@ -92,7 +93,7 @@ class GetCurrentWeatherUseCaseTest {
         coEvery { weatherRepository.getCurrentWeather(zeroLat, zeroLon) } returns expectedWeather
 
         // When
-        val result = getCurrentWeatherUseCase(zeroLat, zeroLon)
+        val result = getCurrentWeatherUseCase.getCurrentWeather(zeroLat, zeroLon)
 
         // Then
         coVerify { weatherRepository.getCurrentWeather(zeroLat, zeroLon) }
