@@ -1,5 +1,5 @@
 package domain.use_cases
-
+import com.google.common.truth.Truth.assertThat
 import domain.models.CurrentWeather
 import domain.repository.WeatherRepository
 import io.mockk.coEvery
@@ -44,15 +44,14 @@ class GetCurrentWeatherUseCaseTest {
     }
 
     @Test
-    fun `should return current weather for given city`() = runTest {
-        // Given
-        coEvery { weatherRepository.getCurrentWeather(city) } returns expectedWeather
+        fun `should return current weather for given city when getting the current weather`() = runTest {
+            // Given
+            coEvery { weatherRepository.getCurrentWeather(city) } returns expectedWeather
 
-        // When
-        val result = getCurrentWeatherUseCase(city)
+            // When
+            val result = getCurrentWeatherUseCase(city)
 
         // Then
-        assertEquals(expectedWeather, result)
         coVerify(exactly = 1) { weatherRepository.getCurrentWeather(city) }
     }
 
@@ -62,12 +61,13 @@ class GetCurrentWeatherUseCaseTest {
         val exceptionMessage = "API error"
         coEvery { weatherRepository.getCurrentWeather(city) } throws RuntimeException(exceptionMessage)
 
-        // When / Then
         try {
+            // When
             getCurrentWeatherUseCase(city)
             fail("Exception was expected")
         } catch (e: RuntimeException) {
-            assertEquals(exceptionMessage, e.message)
+            // Then
+            assertThat(e.message).isEqualTo(exceptionMessage)
         }
     }
 
@@ -81,11 +81,11 @@ class GetCurrentWeatherUseCaseTest {
         val result = getCurrentWeatherUseCase(city)
 
         // Then
-        assertEquals("17.8", result.temperature2m)
+        assertThat(result.temperature2m).isEqualTo("17.8")
     }
 
     @Test
-    fun `should call repository with empty city name`() = runTest {
+    fun `should call repository with empty city name`()= runTest {
         // Given
         val emptyCity = ""
         coEvery { weatherRepository.getCurrentWeather(emptyCity) } returns expectedWeather
