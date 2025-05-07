@@ -78,14 +78,14 @@ class GetCurrentWeatherUseCaseTest {
     @Test
     fun `should return weather with valid temperature value`() = runTest {
         // Given
-        val modifiedWeather = expectedWeather.copy(temperature2m = 17.8)
+        val modifiedWeather = expectedWeather.copy(temperature2m = 20.8)
         coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } returns modifiedWeather
 
         // When
         val result = getCurrentWeatherUseCase(latitude, longitude)
 
         // Then
-        assertThat(result.temperature2m).isEqualTo(17.8)
+        assertThat(result.temperature2m).isEqualTo(20.8)
     }
 
     @Test
