@@ -171,9 +171,9 @@ class SuggestClothesBasedOnWeatherUseCaseTest {
  }
 
  @Test
- fun `getSuggestClothesByWeather() should suggest warmer layers at night`() = runTest {
+ fun `getSuggestClothesByWeather() should suggest waterproof jacket or umbrella when rain is greater than 0 mm`() = runTest {
   // Given
-  val weather = createWeather(isDay = 0)
+  val weather = createWeather(rain = 2.00)
 
   coEvery { repository.getCurrentWeather(any(), any()) } returns weather
 
@@ -181,11 +181,25 @@ class SuggestClothesBasedOnWeatherUseCaseTest {
   val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
 
   // Then
-  assertThat(suggestions).contains("slightly warmer layers")
+  assertThat(suggestions).containsAtLeast("waterproof jacket", "umbrella")
  }
 
  @Test
- fun `getSuggestClothesByWeather() should suggest cooler feel when overcast`() = runTest {
+ fun `getSuggestClothesByWeather() should suggest snow boots or insulated gloves when snowfall is greater than 0 cm`() = runTest {
+  // Given
+  val weather = createWeather(rain = 3.00)
+
+  coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+  // When
+  val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
+
+  // Then
+  assertThat(suggestions).containsAtLeast("snow boots", "insulated gloves")
+ }
+
+ @Test
+ fun `getSuggestClothesByWeather() should suggest cooler feel when cloud cover is greater than 70%`() = runTest {
   // Given
   val weather = createWeather(cloudCover = 70.0)
   coEvery { repository.getCurrentWeather(any(), any()) } returns weather
@@ -198,7 +212,7 @@ class SuggestClothesBasedOnWeatherUseCaseTest {
  }
 
  @Test
- fun `getSuggestClothesByWeather() should suggest partly cloudy feel when cloud cover 30-60%`() = runTest {
+ fun `getSuggestClothesByWeather() should suggest partly cloudy feel when cloud cover 30-70%`() = runTest {
   // Given
   val weather = createWeather(cloudCover = 50.0)
   coEvery { repository.getCurrentWeather(any(), any()) } returns weather
@@ -223,6 +237,97 @@ class SuggestClothesBasedOnWeatherUseCaseTest {
   assertThat(suggestions).contains("mostly clear feel")
  }
 
+ @Test
+ fun `getSuggestClothesByWeather() should suggest light layers (partly cloudy) when weather code is between (1-3) wmo code`() = runTest {
+  // Given
+  val weather = createWeather(weatherCode = 2.0)
+  coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+  // When
+  val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
+
+  // Then
+  assertThat(suggestions).contains("light layers (partly cloudy)")
+ }
+
+ @Test
+ fun `getSuggestClothesByWeather() should suggest high-visibility clothing (fog) when weather code is between (45-48) wmo code`() = runTest {
+  // Given
+  val weather = createWeather(weatherCode = 46.0)
+  coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+  // When
+  val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
+
+  // Then
+  assertThat(suggestions).contains("high-visibility clothing (fog)")
+ }
+
+ @Test
+ fun `getSuggestClothesByWeather() should suggest waterproof shoes (rain) when weather code is between (51-67) wmo code`() = runTest {
+  // Given
+  val weather = createWeather(weatherCode = 55.0)
+  coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+  // When
+  val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
+
+  // Then
+  assertThat(suggestions).contains("waterproof shoes (rain)")
+ }
+
+ @Test
+ fun `getSuggestClothesByWeather() should suggest snow gear when weather code is between (71-77) wmo code`() = runTest {
+  // Given
+  val weather = createWeather(weatherCode = 75.0)
+  coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+  // When
+  val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
+
+  // Then
+  assertThat(suggestions).contains("snow gear")
+ }
+
+ @Test
+ fun `getSuggestClothesByWeather() should suggest rain poncho when weather code is between (80-82) wmo code`() = runTest {
+  // Given
+  val weather = createWeather(weatherCode = 81.0)
+  coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+  // When
+  val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
+
+  // Then
+  assertThat(suggestions).contains("rain poncho")
+ }
+
+ @Test
+ fun `getSuggestClothesByWeather() should suggest avoid metal accessories (thunderstorm) when weather code is between (95-99) wmo code`() = runTest {
+  // Given
+  val weather = createWeather(weatherCode = 98.0)
+  coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+  // When
+  val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
+
+  // Then
+  assertThat(suggestions).contains("avoid metal accessories (thunderstorm)")
+ }
+
+ @Test
+ fun `getSuggestClothesByWeather() should suggest reflective clothing layers at night and temperature is less than 18`() = runTest {
+  // Given
+  val weather = createWeather(isDay = 0, temperature2m = 15.0)
+
+  coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+  // When
+  val suggestions = useCase.getSuggestClothesByWeather(52.52,13.419998)
+
+  // Then
+  assertThat(suggestions).contains("reflective clothing")
+ }
 
  fun createWeather(
   temperature2m: Double = 32.0,

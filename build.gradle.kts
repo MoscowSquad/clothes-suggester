@@ -1,5 +1,7 @@
 plugins {
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.1.0"
+    kotlin("plugin.serialization") version "1.8.20"
+    jacoco
 }
 
 group = "com.usc.team"
@@ -30,6 +32,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.6")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
