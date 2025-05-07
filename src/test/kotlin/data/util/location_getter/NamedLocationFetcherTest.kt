@@ -22,7 +22,7 @@ class NamedLocationFetcherTest {
     }
 
     @Test
-    fun `should return location when getting location return from the api`() = runTest {
+    fun `getLocation() should return location when getting location from api`() = runTest {
         // Given
         setUp { _ ->
             respond(
@@ -41,7 +41,7 @@ class NamedLocationFetcherTest {
     }
 
     @Test
-    fun `should ignore other JSON keys when getting location return from the api`() =
+    fun `getLocation() should ignore other JSON keys when getting location return from the api`() =
         runTest {
             // Given
             setUp { _ ->
@@ -61,7 +61,7 @@ class NamedLocationFetcherTest {
         }
 
     @Test
-    fun `should throw NoLocationRetrieved when error happen after request the api`() = runTest {
+    fun `getLocation() should throw NoLocationRetrieved when getting any error after request from api`() = runTest {
         // Given
         setUp { _ ->
             respond(
@@ -77,7 +77,7 @@ class NamedLocationFetcherTest {
     }
 
     @Test
-    fun `should throw NoLocationRetrieved when response not correct`() = runTest {
+    fun `getLocation() should throw NoLocationRetrieved when response not correct`() = runTest {
         // Given
         setUp { _ ->
             respond(
