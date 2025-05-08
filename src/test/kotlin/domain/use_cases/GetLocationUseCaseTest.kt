@@ -17,13 +17,13 @@ class GetLocationUseCaseTest {
     @BeforeEach
     fun setUp() {
         locationFetcher = mockk(relaxed = true)
-        getLocationUseCase = GetLocationUseCase(locationFetcher)
+        getLocationUseCase = GetLocationUseCase()
     }
 
     @Test
     fun `getLocation() should get the location via a LocationFetcher when getting the location`() = runTest {
         // when
-        getLocationUseCase.getLocation()
+        getLocationUseCase.getLocation(locationFetcher)
 
         // Then
         coVerify { locationFetcher.getLocation() }
@@ -36,7 +36,7 @@ class GetLocationUseCaseTest {
         coEvery { locationFetcher.getLocation() } returns location
 
         // when
-        val result = getLocationUseCase.getLocation()
+        val result = getLocationUseCase.getLocation(locationFetcher)
 
         // Then
         Truth.assertThat(result).isEqualTo(location)

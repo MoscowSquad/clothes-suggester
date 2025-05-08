@@ -26,7 +26,7 @@ class NamedLocationFetcherTest {
         // Given
         setUp { _ ->
             respond(
-                content = """{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt"}""",
+                content = """{"data": [{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt"}]}""",
                 status = HttpStatusCode.OK, headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
@@ -46,7 +46,7 @@ class NamedLocationFetcherTest {
             // Given
             setUp { _ ->
                 respond(
-                    content = """{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt","timezone": "Africa/Cairo"}""",
+                    content = """{"data": [{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt","timezone": "Africa/Cairo"}]}""",
                     status = HttpStatusCode.OK, headers = headersOf(HttpHeaders.ContentType, "application/json")
                 )
             }
@@ -65,7 +65,7 @@ class NamedLocationFetcherTest {
         // Given
         setUp { _ ->
             respond(
-                content = """{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt"}""",
+                content = """{"data": [{"lat":29.9791854, "lon":31.1316879, "city":"Giza","country":"Egypt"}]}""",
                 status = HttpStatusCode.NotFound, headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
