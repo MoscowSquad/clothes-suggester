@@ -17,6 +17,7 @@ dependencies {
     implementation("io.arrow-kt:arrow-core:2.0.1")
     implementation("io.arrow-kt:arrow-fx-coroutines:2.0.1")
     implementation("io.insert-koin:koin-core:4.0.2")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.0-M1")
     testImplementation("io.mockk:mockk:1.13.16")
@@ -35,9 +36,10 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation(kotlin("stdlib-jdk8"))
 
 
-    }
+}
 
 tasks.test {
     useJUnitPlatform()
