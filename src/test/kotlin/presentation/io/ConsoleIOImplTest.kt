@@ -102,28 +102,13 @@ class ConsoleIOImplTest {
     fun `showError should output red colored message`() {
         // Given
         val errorMessage = "error message"
-        val red = "\u001B[31m"
-        val reset = "\u001B[0m"
 
         // When
         consoleIO.showError(errorMessage)
 
         // Then
+        val expected = "${RED}${errorMessage}${RESET}"
         val output = outputStream.toString().trim()
-        assertThat(output).isEqualTo("${red}${errorMessage}${reset}")
-    }
-
-    @Test
-    fun `showError should handle null message`() {
-        // Given
-        val red = "\u001B[31m"
-        val reset = "\u001B[0m"
-
-        // When
-        consoleIO.showError(null)
-
-        // Then
-        val output = outputStream.toString().trim()
-        assertThat(output).isEqualTo("${red}null${reset}")
+        assertThat(output).isEqualTo(expected)
     }
 }

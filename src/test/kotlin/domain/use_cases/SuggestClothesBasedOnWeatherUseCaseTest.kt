@@ -190,9 +190,6 @@ class SuggestClothesBasedOnWeatherUseCaseTest {
         apparentTemperature: Double = 33.0,
         rain: Double = 0.0,
         snowfall: Double = 0.0,
-        weatherCode: Double = 1.0,
-        time: String = "2025-05-07T13:45",
-        interval: Double = 900.0
     ): CurrentWeather {
         return CurrentWeather(
             temperature2m = temperature2m,

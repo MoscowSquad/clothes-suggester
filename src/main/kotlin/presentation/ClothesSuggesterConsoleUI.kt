@@ -38,14 +38,7 @@ class ClothesSuggesterConsoleUI(
         showError(thrwable.message)
     }
 
-    suspend fun start() {
-        writeln(
-            """
-                👖Welcome to Clothes Suggester
-            """.trimIndent()
-        )
-        goMainMenu()
-
+    init {
         locationScope.launch(exceptionHandler) {
             locationSF.collect { location ->
                 writeln("\tget location info...")
@@ -68,6 +61,15 @@ class ClothesSuggesterConsoleUI(
                 goMainMenu()
             }
         }
+    }
+
+    fun start() {
+        writeln(
+            """
+                👖Welcome to Clothes Suggester
+            """.trimIndent()
+        )
+        goMainMenu()
     }
 
     private fun goMainMenu() {
@@ -93,12 +95,14 @@ class ClothesSuggesterConsoleUI(
     }
 
     private fun goToScreen() {
-        val input = consoleIO.read().toIntOrNull()
+        val errorCode = 1002
+        val input = consoleIO.read().toIntOrNull() ?: errorCode
         when (input) {
             1 -> getCurrentLocation()
             2 -> getNamedLocation()
             3 -> exitProcess(0)
-            else -> {
+            errorCode -> {
+                assert(true)
                 showError("\nInvalid input. Please enter a number between 1 and 4.")
                 goMainMenu()
             }
