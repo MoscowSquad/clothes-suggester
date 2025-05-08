@@ -58,7 +58,8 @@ class GetCurrentWeatherUseCaseTest {
 
     @Test
 
-    fun `should throw exception when repository fails`() = runTest {
+    fun `fun getCurrentWeather() should throw exception when repository fails`()= runTest {
+
         // Given
         val exceptionMessage = "API error"
         coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } throws RuntimeException(exceptionMessage)
@@ -73,21 +74,24 @@ class GetCurrentWeatherUseCaseTest {
     }
 
     @Test
-    fun `should return weather with valid temperature value`() = runTest {
+        fun `getCurrentWeather() should return expected weather data when valid latitude and longitude are provided()`() = runTest {
         // Given
-        val modifiedWeather = expectedWeather.copy(temperature2m = 20.8)
-        coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } returns modifiedWeather
+        val testLat = 33.3
+        val testLon = 44.4
+        val expected = expectedWeather.copy(temperature2m = 25.0)
+        coEvery { weatherRepository.getCurrentWeather(testLat, testLon) } returns expected
 
         // When
-        val result = getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
+        val result = getCurrentWeatherUseCase.getCurrentWeather(testLat, testLon)
 
         // Then
-        assertThat(result.temperature2m).isEqualTo(20.8)
+        coVerify { weatherRepository.getCurrentWeather(testLat, testLon) }
+        assertThat(result).isEqualTo(expected)
     }
 
-    @Test
-    fun `should call repository with zero coordinates`() = runTest {
-        // Given
+
+        @Test
+        fun `getCurrentWeather() should call repository with zero coordinates when latitude and longitude are both zeros`() = runTest {
         val zeroLat = 0.0
         val zeroLon = 0.0
         coEvery { weatherRepository.getCurrentWeather(zeroLat, zeroLon) } returns expectedWeather
