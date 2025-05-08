@@ -1,10 +1,9 @@
 package domain.use_cases
 
-import GetCurrentWeatherUseCase
-import WeatherRepository
 import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import domain.models.CurrentWeather
+import domain.repository.WeatherRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -44,7 +43,7 @@ class GetCurrentWeatherUseCaseTest {
             coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } returns expectedWeather
 
             // When
-            val result = getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
+            getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
 
             // Then
             coVerify(exactly = 1) { weatherRepository.getCurrentWeather(latitude, longitude) }

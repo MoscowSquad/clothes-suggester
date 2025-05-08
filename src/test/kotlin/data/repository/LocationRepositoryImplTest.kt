@@ -17,7 +17,7 @@ class LocationRepositoryImplTest {
     @BeforeEach
     fun setUp() {
         locationFetcher = mockk(relaxed = true)
-        locationRepository = LocationRepositoryImpl(locationFetcher)
+        locationRepository = LocationRepositoryImpl()
     }
 
     @Test
@@ -27,7 +27,7 @@ class LocationRepositoryImplTest {
         coEvery { locationFetcher.getLocation() } returns location
 
         // When
-        val result = locationRepository.getLocation()
+        val result = locationRepository.getLocation(locationFetcher)
 
         // Then
         Truth.assertThat(result).isEqualTo(location)
@@ -36,7 +36,7 @@ class LocationRepositoryImplTest {
     @Test
     fun `getLocation() should get location using LocationFetcher when getting the location`() = runTest {
         // When
-        locationRepository.getLocation()
+        locationRepository.getLocation(locationFetcher)
 
         // Then
         coVerify { locationFetcher.getLocation() }

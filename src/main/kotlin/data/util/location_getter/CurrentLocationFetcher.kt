@@ -7,10 +7,10 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 const val IP_API_URL = "http://ip-api.com/json"
+
 class CurrentLocationFetcher(private val httpClient: HttpClient) : LocationFetcher {
     override suspend fun getLocation(): Location {
         val httpResponse = httpClient.get(IP_API_URL)

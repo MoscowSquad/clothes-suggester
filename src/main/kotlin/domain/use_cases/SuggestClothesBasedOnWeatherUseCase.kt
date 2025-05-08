@@ -1,38 +1,35 @@
 package domain.use_cases
 
-import WeatherRepository
+import domain.models.CurrentWeather
 
-class SuggestClothesBasedOnWeatherUseCase(
-    private val weatherRepository: WeatherRepository
-) {
-    suspend fun getSuggestClothesByWeather(latitude: Double, longitude: Double): List<String>{
-        val weather = weatherRepository.getCurrentWeather(latitude, longitude)
+class SuggestClothesBasedOnWeatherUseCase {
+    suspend fun getSuggestClothesByWeather(weather: CurrentWeather): List<String> {
         val suggestions = mutableListOf<String>()
         val temperature = weather.temperature2m.toFloat()
         val windSpeed = weather.windSpeed10m.toFloat()
-        val cloudCover = weather.cloudCover.toInt()
         val isDay = weather.isDay == 1
-        val weatherCode = weather.weatherCode.toInt()
         val rain = weather.rain.toFloat()
         val snowfall = weather.snowfall.toFloat()
 
         // Temperature-based suggestions
         when {
-            temperature > 30 -> {
-                suggestions.addAll(listOf("very light clothes", "tank tops", "shorts"))
-            }
-            temperature in 25f..30f -> {
-                suggestions.addAll(listOf("light T-shirt", "shorts", "breathable wear"))
-            }
             temperature < 0 -> {
                 suggestions.addAll(listOf("heavy winter coat", "gloves", "scarf"))
+            }
+
+            temperature <= 29 -> {
+                suggestions.addAll(listOf("light T-shirt", "shorts", "breathable wear"))
+            }
+
+            else -> {
+                suggestions.addAll(listOf("very light clothes", "tank tops", "shorts"))
             }
         }
 
         // Wind-based suggestions
         when {
             windSpeed > 15 -> suggestions.add("windbreaker")
-            windSpeed in 8f..15f -> suggestions.add("light jacket")
+            windSpeed > 8 -> suggestions.add("light jacket")
         }
 
         // Precipitation-based suggestions
@@ -42,7 +39,7 @@ class SuggestClothesBasedOnWeatherUseCase(
         }
 
         // Nighttime suggestion
-        if (!isDay && temperature < 18) {
+        if (!isDay) {
             suggestions.add("reflective clothing")
         }
 
