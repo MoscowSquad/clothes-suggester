@@ -24,15 +24,20 @@ dependencies {
     testImplementation("com.google.truth:truth:1.4.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-
     implementation("io.ktor:ktor-client-core:2.3.13")
     implementation("io.ktor:ktor-client-cio:2.3.13")
     testImplementation("io.ktor:ktor-client-mock:2.3.13")
 
     implementation("ch.qos.logback:logback-classic:1.5.6")
-
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-}
+    val ktor_version = "2.3.10"
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+
+
+    }
 
 tasks.test {
     useJUnitPlatform()
