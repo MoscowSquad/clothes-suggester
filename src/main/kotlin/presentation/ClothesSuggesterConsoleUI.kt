@@ -1,17 +1,16 @@
 package presentation
 
-import GetCurrentWeatherUseCase
 import data.util.location_getter.CurrentLocationFetcher
 import data.util.location_getter.NamedLocationFetcher
 import domain.models.CurrentWeather
 import domain.models.Location
+import domain.use_cases.GetCurrentWeatherUseCase
 import domain.use_cases.GetLocationUseCase
 import domain.use_cases.SuggestClothesBasedOnWeatherUseCase
 import io.ktor.client.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import presentation.io.BLUE
 import presentation.io.ConsoleIO

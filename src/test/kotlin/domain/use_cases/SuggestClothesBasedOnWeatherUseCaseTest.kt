@@ -1,10 +1,9 @@
 package domain.use_cases
 
-import WeatherRepository
-import com.google.common.truth.Truth
 import domain.models.CurrentWeather
 import org.junit.jupiter.api.Test
 import com.google.common.truth.Truth.assertThat
+import domain.repository.WeatherRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -40,9 +39,45 @@ class SuggestClothesBasedOnWeatherUseCaseTest {
         }
 
     @Test
-    fun `getSuggestClothesByWeather() should suggest light T-shirt when temperature between 25-30 C`() = runTest {
+    fun `getSuggestClothesByWeather() should suggest light T-shirt when temperature between 25-29 C`() = runTest {
         // Given
         val weather = createWeather(temperature2m = 27.0)
+
+        coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+        // When
+        val suggestions = useCase.getSuggestClothesByWeather(weather)
+
+        // Then
+        assertThat(suggestions).containsAtLeast(
+            "light T-shirt",
+            "shorts",
+            "breathable wear"
+        )
+    }
+
+    @Test
+    fun `getSuggestClothesByWeather() should suggest light T-shirt when temperature equal 25 C`() = runTest {
+        // Given
+        val weather = createWeather(temperature2m = 25.0)
+
+        coEvery { repository.getCurrentWeather(any(), any()) } returns weather
+
+        // When
+        val suggestions = useCase.getSuggestClothesByWeather(weather)
+
+        // Then
+        assertThat(suggestions).containsAtLeast(
+            "light T-shirt",
+            "shorts",
+            "breathable wear"
+        )
+    }
+
+    @Test
+    fun `getSuggestClothesByWeather() should suggest light T-shirt when temperature equal 29 C`() = runTest {
+        // Given
+        val weather = createWeather(temperature2m = 29.0)
 
         coEvery { repository.getCurrentWeather(any(), any()) } returns weather
 

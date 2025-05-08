@@ -1,6 +1,5 @@
 package domain.use_cases
 
-import WeatherRepository
 import domain.models.CurrentWeather
 
 class SuggestClothesBasedOnWeatherUseCase {
@@ -14,23 +13,23 @@ class SuggestClothesBasedOnWeatherUseCase {
 
         // Temperature-based suggestions
         when {
-            temperature > 30 -> {
-                suggestions.addAll(listOf("very light clothes", "tank tops", "shorts"))
+            temperature < 0 -> {
+                suggestions.addAll(listOf("heavy winter coat", "gloves", "scarf"))
             }
 
-            temperature in 25f..30f -> {
+            temperature <= 29 -> {
                 suggestions.addAll(listOf("light T-shirt", "shorts", "breathable wear"))
             }
 
-            temperature < 0 -> {
-                suggestions.addAll(listOf("heavy winter coat", "gloves", "scarf"))
+            else -> {
+                suggestions.addAll(listOf("very light clothes", "tank tops", "shorts"))
             }
         }
 
         // Wind-based suggestions
         when {
             windSpeed > 15 -> suggestions.add("windbreaker")
-            windSpeed in 8f..15f -> suggestions.add("light jacket")
+            windSpeed > 8 -> suggestions.add("light jacket")
         }
 
         // Precipitation-based suggestions
@@ -40,7 +39,7 @@ class SuggestClothesBasedOnWeatherUseCase {
         }
 
         // Nighttime suggestion
-        if (!isDay && temperature < 18) {
+        if (!isDay) {
             suggestions.add("reflective clothing")
         }
 

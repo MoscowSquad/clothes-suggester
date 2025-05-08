@@ -1,9 +1,9 @@
 package data.repository
 
-import WeatherRepository
 import domain.models.CurrentWeather
+import domain.models.FailedFetchWeatherDataException
 import domain.models.NoLocationRetrieved
-import domain.models.exceptions.FailedFetchWeatherDataException
+import domain.repository.WeatherRepository
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -20,7 +20,7 @@ class WeatherRepositoryImpl(private val httpClient: HttpClient) : WeatherReposit
             parameter("longitude", longitude)
             parameter(
                 "current",
-                "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,wind_speed_10m,snowfall,rain,weather_code,cloud_cover"
+                "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,rain,showers,snowfall,wind_speed_10m,cloud_cover"
             )
         }
 
