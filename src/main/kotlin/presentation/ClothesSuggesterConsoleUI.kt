@@ -8,6 +8,7 @@ import domain.use_cases.GetCurrentWeatherUseCase
 import domain.use_cases.GetLocationUseCase
 import domain.use_cases.SuggestClothesBasedOnWeatherUseCase
 import io.ktor.client.*
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,7 +21,7 @@ class ClothesSuggesterConsoleUI(
     private val httpClient: HttpClient,
     private val getLocationUseCase: GetLocationUseCase,
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-    private val clothesBasedOnWeatherUseCase: SuggestClothesBasedOnWeatherUseCase,
+    private val suggestClothesBasedOnWeatherUseCase: SuggestClothesBasedOnWeatherUseCase,
     private val consoleIO: ConsoleIO
 ) : ConsoleIO by consoleIO {
     val uiFlow: MutableSharedFlow<Int> = MutableSharedFlow()
@@ -33,6 +34,10 @@ class ClothesSuggesterConsoleUI(
     private val weatherScope = CoroutineScope(Dispatchers.Default)
     private val suggestClothesScope = CoroutineScope(Dispatchers.Default)
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, thrwable ->
+        showError(thrwable.message)
+    }
+
     suspend fun start() {
         writeln(
             """
@@ -41,20 +46,20 @@ class ClothesSuggesterConsoleUI(
         )
         goMainMenu()
 
-        locationScope.launch {
+        locationScope.launch(exceptionHandler) {
             locationSF.collect { location ->
                 writeln("\tget location info...")
                 getCurrentWeather(location)
             }
         }
 
-        weatherScope.launch {
+        weatherScope.launch(exceptionHandler) {
             getWeatherSF.collect { weather ->
                 suggestClotheBaseOnWeather(weather)
             }
         }
 
-        suggestClothesScope.launch {
+        suggestClothesScope.launch(exceptionHandler) {
             suggestClothesSF.collect { suggestions ->
                 suggestions.forEach {
                     writeln(it, BLUE)
@@ -88,7 +93,7 @@ class ClothesSuggesterConsoleUI(
     }
 
     private fun goToScreen() {
-        val input = read().toIntOrNull()
+        val input = consoleIO.read().toIntOrNull()
         when (input) {
             1 -> getCurrentLocation()
             2 -> getNamedLocation()
@@ -102,18 +107,18 @@ class ClothesSuggesterConsoleUI(
 
     private fun suggestClotheBaseOnWeather(weather: CurrentWeather) {
         writeln("\tget location info...")
-        suggestClothesScope.launch {
-            val suggestions = clothesBasedOnWeatherUseCase.getSuggestClothesByWeather(weather)
+        suggestClothesScope.launch(exceptionHandler) {
+            val suggestions = suggestClothesBasedOnWeatherUseCase.getSuggestClothesByWeather(weather)
             suggestClothesSF.emit(suggestions)
         }
     }
 
     private fun getNamedLocation() {
         write("enter location name: ")
-        val input = readln()
+        val input = consoleIO.read()
         val namedLocationFetcher = NamedLocationFetcher(input, httpClient)
         writeln("\tget location info...")
-        clothesSuggesterScope.launch {
+        clothesSuggesterScope.launch(exceptionHandler) {
             val location = getLocationUseCase.getLocation(namedLocationFetcher)
             locationSF.emit(location)
         }
@@ -122,7 +127,7 @@ class ClothesSuggesterConsoleUI(
     private fun getCurrentLocation() {
         writeln("\tget location info...")
         val currentLocationFetcher = CurrentLocationFetcher(httpClient)
-        clothesSuggesterScope.launch {
+        clothesSuggesterScope.launch(exceptionHandler) {
             val location = getLocationUseCase.getLocation(currentLocationFetcher)
             locationSF.emit(location)
         }
