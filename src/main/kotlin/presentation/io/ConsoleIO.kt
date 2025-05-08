@@ -2,7 +2,7 @@ package presentation.io
 
 const val BLACK = "\u001B[30m"
 const val RESET = "\u001B[0m"
-const val RED = "\u001B[31m"    // Red for failure
+const val RED = "\u001B[31m"
 const val BLUE = "\u001B[34m"
 
 interface ConsoleIO {

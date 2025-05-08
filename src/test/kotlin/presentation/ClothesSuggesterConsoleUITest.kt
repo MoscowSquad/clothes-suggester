@@ -49,7 +49,7 @@ class ClothesSuggesterConsoleUITest {
 
         // Then
         coVerify {
-            consoleIO.writeln(match { it.contains("Welcome to Clothes Suggester") })
+            consoleIO.writeln(match { it.contains("Welcome to Clothes Suggester App") })
         }
     }
 

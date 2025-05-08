@@ -66,7 +66,7 @@ class ClothesSuggesterConsoleUI(
     fun start() {
         writeln(
             """
-                👖Welcome to Clothes Suggester
+                👖Welcome to Clothes Suggester App
             """.trimIndent()
         )
         goMainMenu()
@@ -89,7 +89,7 @@ class ClothesSuggesterConsoleUI(
               1. my current location
               2. another location
               3. exit
-            enter your option: 
+            Enter your option: 
             """.trimIndent()
         )
     }
