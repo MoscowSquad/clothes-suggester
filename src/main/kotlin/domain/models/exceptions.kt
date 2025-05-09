@@ -1,10 +1,8 @@
 package domain.models
 
+import io.ktor.http.*
 import io.ktor.utils.io.errors.*
 
-class NoLocationRetrieved(message: String = "No location retrieved") : IOException(message)
+class NoLocationRetrieved : IOException("No location retrieved")
 
-class FailedFetchWeatherDataException(
-    message: String,
-    cause: Throwable? = null
-) : Exception(message, cause)
+class FailedFetchWeatherDataException(status: HttpStatusCode) : Exception("Can't retrieve data from API, response statue: $status")

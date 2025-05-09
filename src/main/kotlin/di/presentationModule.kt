@@ -10,6 +10,5 @@ val presentationModule = module {
     single { Scanner(System.`in`) }
     single<ConsoleIO> { ConsoleIOImpl(get()) }
 
-    // Authentication UI
     single { ClothesSuggesterConsoleUI(get(), get(), get(), get(), get()) }
 }

@@ -1,5 +1,6 @@
 package data.repository
 
+import data.util.parseResponse
 import domain.models.CurrentWeather
 import domain.models.FailedFetchWeatherDataException
 import domain.models.NoLocationRetrieved
@@ -8,7 +9,6 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.serialization.json.Json
 import org.json.JSONObject
 
 const val OPEN_METO_API = "https://api.open-meteo.com/v1/forecast"
@@ -25,17 +25,12 @@ class WeatherRepositoryImpl(private val httpClient: HttpClient) : WeatherReposit
         }
 
         if (httpResponse.status != HttpStatusCode.OK) {
-            throw FailedFetchWeatherDataException(
-                "Weather API returned error status: ${httpResponse.status}"
-            )
+            throw FailedFetchWeatherDataException(httpResponse.status)
         }
 
         try {
             val response = JSONObject(httpResponse.bodyAsText()).get("current").toString()
-            val json = Json {
-                ignoreUnknownKeys = true
-            }
-            return json.decodeFromString<CurrentWeather>(response)
+            return response.parseResponse<CurrentWeather>()
         } catch (e: Exception) {
             throw NoLocationRetrieved()
         }

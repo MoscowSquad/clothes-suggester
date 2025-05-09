@@ -119,8 +119,8 @@ class ClothesSuggesterConsoleUI(
 
     private fun getNamedLocation() {
         write("enter location name: ")
-        val input = consoleIO.read()
-        val namedLocationFetcher = NamedLocationFetcher(input, httpClient)
+        val placeName = consoleIO.read()
+        val namedLocationFetcher = NamedLocationFetcher(placeName, httpClient)
         writeln("\tget location info...")
         clothesSuggesterScope.launch(exceptionHandler) {
             val location = getLocationUseCase.getLocation(namedLocationFetcher)
