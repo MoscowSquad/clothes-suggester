@@ -5,8 +5,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class Location @OptIn(ExperimentalSerializationApi::class) constructor(
+data class Location(
     @SerialName("latitude")
     @JsonNames("lat")
     val latitude: Double,
