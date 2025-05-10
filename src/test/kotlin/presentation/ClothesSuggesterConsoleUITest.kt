@@ -1,7 +1,6 @@
 package presentation
 
-import data.util.location_getter.CurrentLocationFetcher
-import data.util.location_getter.NamedLocationFetcher
+import data.util.location_getter.UniversalLocationFetcher
 import domain.use_cases.GetCurrentWeatherUseCase
 import domain.use_cases.GetLocationUseCase
 import domain.use_cases.SuggestClothesBasedOnWeatherUseCase
@@ -37,7 +36,6 @@ class ClothesSuggesterConsoleUITest {
         )
     }
 
-
     @Test
     fun `should display welcome message and authenticate user on start`() = runTest {
         // Given
@@ -71,30 +69,63 @@ class ClothesSuggesterConsoleUITest {
     }
 
     @Test
-    fun `should navigate to get current location screen when option 1 is selected`() = runTest {
+    fun `should use CurrentLocationStrategy when option 1 is selected`() = runTest {
         // Given
         coEvery { consoleIO.read() } returns "1"
+        coEvery { getLocationUseCase.getLocation(any()) } returns mockk()
 
         // When
         clothesSuggesterConsoleUI.start()
 
         // Then
         coVerify {
-            getLocationUseCase.getLocation(any<CurrentLocationFetcher>())
+            getLocationUseCase.getLocation(
+                match { fetcher ->
+                    fetcher is UniversalLocationFetcher &&
+                            fetcher.strategy is UniversalLocationFetcher.CurrentLocationStrategy
+                }
+            )
         }
     }
 
     @Test
-    fun `should navigate to get location by name when option 2 is selected`() = runTest {
+    fun `should use NamedLocationStrategy when option 2 is selected`() = runTest {
         // Given
         coEvery { consoleIO.read() } returns "2"
+        coEvery { consoleIO.read() } returns "New York"
+        coEvery { getLocationUseCase.getLocation(any()) } returns mockk()
 
         // When
         clothesSuggesterConsoleUI.start()
 
         // Then
         coVerify {
-            getLocationUseCase.getLocation(any<NamedLocationFetcher>())
+            getLocationUseCase.getLocation(
+                match { fetcher ->
+                    fetcher is UniversalLocationFetcher &&
+                            fetcher.strategy is UniversalLocationFetcher.NamedLocationStrategy
+                }
+            )
+        }
+    }
+
+    @Test
+    fun `should pass correct location name to NamedLocationStrategy`() = runTest {
+        // Given
+        coEvery { consoleIO.read() } returnsMany listOf("2", "Paris")
+        coEvery { getLocationUseCase.getLocation(any()) } returns mockk()
+
+        // When
+        clothesSuggesterConsoleUI.start()
+
+        // Then
+        coVerify {
+            getLocationUseCase.getLocation(
+                match { fetcher ->
+                    fetcher is UniversalLocationFetcher &&
+                            (fetcher.strategy as UniversalLocationFetcher.NamedLocationStrategy).placeName == "Paris"
+                }
+            )
         }
     }
 }

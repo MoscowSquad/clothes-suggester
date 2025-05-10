@@ -1,7 +1,6 @@
 package presentation
 
-import data.util.location_getter.CurrentLocationFetcher
-import data.util.location_getter.NamedLocationFetcher
+import data.util.location_getter.UniversalLocationFetcher
 import domain.models.CurrentWeather
 import domain.models.Location
 import domain.use_cases.GetCurrentWeatherUseCase
@@ -57,7 +56,6 @@ class ClothesSuggesterConsoleUI(
                 suggestions.forEach {
                     writeln(it, BLUE)
                 }
-
                 goMainMenu()
             }
         }
@@ -120,19 +118,25 @@ class ClothesSuggesterConsoleUI(
     private fun getNamedLocation() {
         write("enter location name: ")
         val input = consoleIO.read()
-        val namedLocationFetcher = NamedLocationFetcher(input, httpClient)
+        val locationFetcher = UniversalLocationFetcher(
+            UniversalLocationFetcher.NamedLocationStrategy(input),
+            httpClient
+        )
         writeln("\tget location info...")
         clothesSuggesterScope.launch(exceptionHandler) {
-            val location = getLocationUseCase.getLocation(namedLocationFetcher)
+            val location = getLocationUseCase.getLocation(locationFetcher)
             locationSF.emit(location)
         }
     }
 
     private fun getCurrentLocation() {
         writeln("\tget location info...")
-        val currentLocationFetcher = CurrentLocationFetcher(httpClient)
+        val locationFetcher = UniversalLocationFetcher(
+            UniversalLocationFetcher.CurrentLocationStrategy(),
+            httpClient
+        )
         clothesSuggesterScope.launch(exceptionHandler) {
-            val location = getLocationUseCase.getLocation(currentLocationFetcher)
+            val location = getLocationUseCase.getLocation(locationFetcher)
             locationSF.emit(location)
         }
     }
