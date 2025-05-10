@@ -3,7 +3,7 @@ package domain.use_cases
 import domain.models.CurrentWeather
 
 class SuggestClothesBasedOnWeatherUseCase {
-    suspend fun getSuggestClothesByWeather(weather: CurrentWeather): List<String> {
+    fun getSuggestClothesByWeather(weather: CurrentWeather): List<String> {
         val suggestions = mutableListOf<String>()
         val temperature = weather.temperature2m.toFloat()
         val windSpeed = weather.windSpeed10m.toFloat()
