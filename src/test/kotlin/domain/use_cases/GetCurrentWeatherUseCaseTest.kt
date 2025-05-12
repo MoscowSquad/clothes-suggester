@@ -1,6 +1,5 @@
 package domain.use_cases
 
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import domain.models.CurrentWeather
 import domain.repository.WeatherRepository
@@ -37,20 +36,19 @@ class GetCurrentWeatherUseCaseTest {
     }
 
     @Test
-    fun `should get the current weather from the WeatherRepository when getting the current weather`() =
-        runTest {
-            // Given
-            coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } returns expectedWeather
+    fun `getCurrentWeather() should call repository with given coordinates`() = runTest {
+        // Given
+        coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } returns expectedWeather
 
-            // When
-            getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
+        // When
+        getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
 
-            // Then
-            coVerify(exactly = 1) { weatherRepository.getCurrentWeather(latitude, longitude) }
-        }
+        // Then
+        coVerify(exactly = 1) { weatherRepository.getCurrentWeather(latitude, longitude) }
+    }
 
     @Test
-    fun `should return current weather for given coordinates when getting the current weather`() = runTest {
+    fun `getCurrentWeather() should return expected weather for given coordinates`() = runTest {
         // Given
         coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } returns expectedWeather
 
@@ -58,13 +56,11 @@ class GetCurrentWeatherUseCaseTest {
         val result = getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
 
         // Then
-        Truth.assertThat(expectedWeather).isEqualTo(result)
+        assertThat(result).isEqualTo(expectedWeather)
     }
 
     @Test
-
-    fun `fun getCurrentWeather() should throw exception when repository fails`() = runTest {
-
+    fun `getCurrentWeather() should throw exception when repository fails`() = runTest {
         // Given
         val exceptionMessage = "API error"
         coEvery { weatherRepository.getCurrentWeather(latitude, longitude) } throws RuntimeException(exceptionMessage)
@@ -74,39 +70,37 @@ class GetCurrentWeatherUseCaseTest {
             getCurrentWeatherUseCase.getCurrentWeather(latitude, longitude)
         }
 
-        // Assert
         assertThat(exception.message).isEqualTo(exceptionMessage)
     }
 
     @Test
-    fun `getCurrentWeather() should return expected weather data when valid latitude and longitude are provided()`() =
-        runTest {
-            // Given
-            val testLat = 33.3
-            val testLon = 44.4
-            val expected = expectedWeather.copy(temperature2m = 25.0)
-            coEvery { weatherRepository.getCurrentWeather(testLat, testLon) } returns expected
+    fun `getCurrentWeather() should return weather for different coordinates`() = runTest {
+        // Given
+        val testLat = 33.3
+        val testLon = 44.4
+        val expected = expectedWeather.copy(temperature2m = 25.0)
+        coEvery { weatherRepository.getCurrentWeather(testLat, testLon) } returns expected
 
-            // When
-            val result = getCurrentWeatherUseCase.getCurrentWeather(testLat, testLon)
+        // When
+        val result = getCurrentWeatherUseCase.getCurrentWeather(testLat, testLon)
 
-            // Then
-            coVerify { weatherRepository.getCurrentWeather(testLat, testLon) }
-            assertThat(result).isEqualTo(expected)
-        }
-
+        // Then
+        coVerify { weatherRepository.getCurrentWeather(testLat, testLon) }
+        assertThat(result).isEqualTo(expected)
+    }
 
     @Test
-    fun `getCurrentWeather() should call repository with zero coordinates when latitude and longitude are both zeros`() =
-        runTest {
-            val zeroLat = 0.0
-            val zeroLon = 0.0
-            coEvery { weatherRepository.getCurrentWeather(zeroLat, zeroLon) } returns expectedWeather
+    fun `getCurrentWeather() should work with zero coordinates`() = runTest {
+        // Given
+        val zeroLat = 0.0
+        val zeroLon = 0.0
+        coEvery { weatherRepository.getCurrentWeather(zeroLat, zeroLon) } returns expectedWeather
 
-            // When
-            getCurrentWeatherUseCase.getCurrentWeather(zeroLat, zeroLon)
+        // When
+        val result = getCurrentWeatherUseCase.getCurrentWeather(zeroLat, zeroLon)
 
-            // Then
-            coVerify { weatherRepository.getCurrentWeather(zeroLat, zeroLon) }
-        }
+        // Then
+        coVerify { weatherRepository.getCurrentWeather(zeroLat, zeroLon) }
+        assertThat(result).isEqualTo(expectedWeather)
+    }
 }
